@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Covid-19 Data Visualization</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      /* Common styles for all charts */
+      body {
+        background-color: #ADD8E6; /* Soothing light blue */
+        font-family: 'Roboto', sans-serif;
+        color: #333;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+      }
+
+      h1 {
+        margin: 20px 0;
+        font-size: 2em;
+        color: #222;
+      }
+
+      /* Buttons styling */
+      button {
+        padding: 10px 20px;
+        margin: 5px;
+        border: none;
+        background-color: #007BFF;
+        color: white;
+        font-size: 1em;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      button.active-button {
+        background-color: #4CAF50; /* Green */
+        color: white;
+      }
+
+      /* Chart containers */
+      svg {
+        width: 90%;
+        height: auto;
+        display: none; /* Hide all charts by default */
+        margin: auto;
+      }
+
+      /* Style to display the active chart */
+      .active {
+        display: block;
+      }
+
+      /* Dropdown container */
+      #dropdown-container {
+        margin-top: 10px;
+        display: none; /* Hidden by default */
+      }
+
+      select {
+        padding: 5px;
+        font-size: 1em;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Covid-19 Data Visualization</h1>
+
+    <!-- Buttons to switch charts -->
+    <div>
+      <button onclick="showChart('piechart')" aria-label="Show Pie Chart">Show Pie Chart</button>
+      <button onclick="showChart('barchart')" aria-label="Show Bar Chart">Show Bar Chart</button>
+      <button onclick="showChart('heatmap')" aria-label="Show Heatmap">Show Heatmap</button>
+    </div>
+
+    <!-- Dropdown container -->
+    <div id="dropdown-container">
+      <label for="chart-dropdown">Choose an attribute: </label>
+      <select id="chart-dropdown" onchange="updateDropdownSelection()"></select>
+    </div>
+
+    <!-- Chart containers -->
+    <svg id="barchart"></svg>
+    <svg id="heatmap"></svg>
+    <svg id="piechart"></svg>
+
+    <!-- JavaScript to handle button clicks and lazy loading -->
+    <script>
+      function loadScript(src, callback) {
+        if (!document.querySelector(`script[src="${src}"]`)) {
+          let script = document.createElement('script');
+          script.src = src;
+          script.onload = callback;
+          document.body.appendChild(script);
+        } else if (callback) {
+          callback();
+        }
+      }
+
+      function showChart(chartId) {
+        // Hide all charts
+        document.querySelectorAll("svg").forEach(chart => {
+          chart.classList.remove("active");
+        });
+
+        // Remove 'active' class from all buttons
+        document.querySelectorAll("button").forEach(button => {
+          button.classList.remove("active-button");
+        });
+
+        // Show the selected chart
+        document.getElementById(chartId).classList.add("active");
+
+        // Highlight the corresponding button
+        event.target.classList.add("active-button");
+
+        // Toggle dropdown visibility based on chart
+        const dropdownContainer = document.getElementById("dropdown-container");
+        if (chartId === "piechart" || chartId === "barchart") {
+          dropdownContainer.style.display = "block";
+          // Populate or refresh dropdown options when switching to piechart or barchart
+          populateDropdown();
+        } else {
+          dropdownContainer.style.display = "none";
+        }
+
+        // Lazy load the corresponding script
+        loadScript("script.js", () => {
+          console.log(`Script for ${chartId} loaded.`);
+        });
+      }
+
+      function updateDropdownSelection() {
+        const dropdown = document.getElementById("chart-dropdown");
+        const selectedValue = dropdown.value;
+
+        // Pass the selected value to the currently visible chart's update function
+        if (document.getElementById("piechart").classList.contains("active")) {
+          updatePieChart(selectedValue); // Ensure pie chart updates
+        } else if (document.getElementById("barchart").classList.contains("active")) {
+          updateBarChart(selectedValue); // Ensure bar chart updates
+        }
+      }
+
+      function populateDropdown() {
+        const dropdown = document.getElementById("chart-dropdown");
+
+        // Only populate the dropdown if it's empty
+        if (!dropdown.options.length) {
+          const attributes = [
+            "sex",
+            "age_group",
+            "race_ethnicity_combined",
+            "hosp_yn",
+            "icu_yn",
+            "death_yn",
+            "medcond_yn"
+          ];
+
+          dropdown.innerHTML = ""; // Clear existing options
+          attributes.forEach(attr => {
+            const option = document.createElement("option");
+            option.value = attr;
+            option.textContent = attr.charAt(0).toUpperCase() + attr.slice(1).replace(/_/g, " ");
+            dropdown.appendChild(option);
+          });
+
+          // Set default selected value
+          dropdown.value = attributes[0];
+        }
+      }
+
+      // Initialize by showing the pie chart
+      showChart('piechart');
+    </script>
+
+    <!-- Link to the external script file -->
+    <script src="script.js"></script>
+  </body>
+</html>
