@@ -135,18 +135,16 @@ function updateBarChart(attribute) {
                 var bar = d3.select(this);
                 var count = d[1];
             
-                // Check if the bar is already active (green)
+                // Toggle the fill color between green and red
                 var isActive = bar.attr("fill") === "green";
                 var newColor = isActive ? "red" : "green";
                 bar.attr("fill", newColor);
             
-                // Remove only the number text, not the axis labels
-                svg.selectAll(".countText").remove();
+                // Remove the previous text if "unclicked"
+                bar.select("text").remove();
             
-                // Add the number text if the bar is clicked and not already active
                 if (!isActive) {
                     svg.append("text")
-                        .attr("class", "countText")  // Add a class to the text element
                         .attr("x", xScale(d[0]) + xScale.bandwidth() / 2)
                         .attr("y", yScale(d[1]) - 10)
                         .attr("text-anchor", "middle")
@@ -154,6 +152,7 @@ function updateBarChart(attribute) {
                         .text(count);
                 }
             });
+
     });
 }
 
