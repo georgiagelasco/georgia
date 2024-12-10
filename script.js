@@ -14,9 +14,7 @@ function updatePieChart(attribute) {
             .append("g")
             .attr("transform", `translate(${dimensions.width / 2}, ${dimensions.height / 2})`);
 
-        svg.selectAll("*").remove();
         var color = d3.scaleOrdinal(d3.schemeCategory10);
-
         var pie = d3.pie().value(d => d.count);
         var arc = d3.arc().innerRadius(0).outerRadius(dimensions.radius);
 
