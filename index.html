@@ -110,9 +110,9 @@
       function updateAttribute(attribute) {
         console.log(`Attribute selected: ${attribute}`);
         // You can update the charts with the selected attribute as needed.
-        // Example: updatePieChart(attribute);
-        // Example: updateBarChart(attribute);
-        // Example: updateHeatmap(attribute);
+        updatePieChart(attribute);
+        updateBarChart(attribute);
+        updateHeatmap();
       }
 
       // All charts are visible by default; no need for specific show/hide functions
