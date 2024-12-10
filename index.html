@@ -147,6 +147,8 @@
           updatePieChart(selectedValue); // Ensure pie chart updates
         } else if (document.getElementById("barchart").classList.contains("active")) {
           updateBarChart(selectedValue); // Ensure bar chart updates
+        } else if (document.getElementById("heatmap").classList.contains("active")) {
+          updateHeatMap(); // Ensure heat map updates
         }
       }
 
