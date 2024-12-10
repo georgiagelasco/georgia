@@ -193,9 +193,7 @@ function updateHeatmap() {
 
     // Read the data
     d3.csv("covid.csv", function (data) {
-        // Filter and prepare the data
-        data = data.filter(d => d.hosp_yn === "Yes" || d.hosp_yn === "No"); // Focus only on hospitalization data
-
+        
         // Group data by age group and race/ethnicity, counting occurrences
         var heatmapData = d3.rollup(
             data,
