@@ -26,7 +26,11 @@
       /* Chart layout */
       .dashboard {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-areas:
+          "box1 box2"
+          "box3 box3";
+        grid-template-columns: repeat(2, 1fr); /* Two equal columns */
+        grid-template-rows: auto auto; /* Two rows */
         gap: 20px;
         padding: 20px;
         max-width: 1200px;
@@ -40,6 +44,18 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         padding: 20px;
         text-align: center;
+      }
+
+      #piechart-container {
+        grid-area: box1;
+      }
+
+      #barchart-container {
+        grid-area: box2;
+      }
+
+      #heatmap-container {
+        grid-area: box3;
       }
 
       svg {
@@ -75,15 +91,15 @@
 
     <!-- Chart Dashboard -->
     <div class="dashboard">
-      <div class="chart-container">
+      <div id="piechart-container" class="chart-container">
         <h3>Pie Chart</h3>
         <svg id="piechart"></svg>
       </div>
-      <div class="chart-container">
+      <div id="barchart-container" class="chart-container">
         <h3>Bar Chart</h3>
         <svg id="barchart"></svg>
       </div>
-      <div class="chart-container">
+      <div id="heatmap-container" class="chart-container">
         <h3>Heatmap</h3>
         <svg id="heatmap"></svg>
       </div>
