@@ -65,11 +65,6 @@
       svg {
         width: 100%;
         height: auto;
-        display: none;
-      }
-
-      .active {
-        display: block;
       }
 
       #attribute-buttons-container {
@@ -85,13 +80,6 @@
     <h1>Covid-19 Data Visualization</h1>
 
     <div class="button-container">
-      <button onclick="showChart('piechart')">Show Pie Chart</button>
-      <button onclick="showChart('barchart')">Show Bar Chart</button>
-      <button onclick="showChart('heatmap')">Show Heatmap</button>
-    </div>
-
-    <!-- Attribute Buttons -->
-    <div id="attribute-buttons-container">
       <button onclick="updateAttribute('sex')">Sex</button>
       <button onclick="updateAttribute('age_group')">Age Group</button>
       <button onclick="updateAttribute('race_ethnicity_combined')">Race/Ethnicity</button>
@@ -119,26 +107,6 @@
     </div>
 
     <script>
-      function loadScript(src, callback) {
-        if (!document.querySelector(`script[src="${src}"]`)) {
-          let script = document.createElement('script');
-          script.src = src;
-          script.onload = callback;
-          document.body.appendChild(script);
-        } else if (callback) {
-          callback();
-        }
-      }
-
-      function showChart(chartId) {
-        document.querySelectorAll("svg").forEach(chart => chart.classList.remove("active"));
-        document.querySelectorAll("button").forEach(button => button.classList.remove("active-button"));
-
-        document.getElementById(chartId).classList.add("active");
-        event.target.classList.add("active-button");
-        loadScript("script.js", () => console.log(`Script for ${chartId} loaded.`));
-      }
-
       function updateAttribute(attribute) {
         console.log(`Attribute selected: ${attribute}`);
         // You can update the charts with the selected attribute as needed.
@@ -147,7 +115,7 @@
         // Example: updateHeatmap(attribute);
       }
 
-      showChart('piechart');
+      // All charts are visible by default; no need for specific show/hide functions
     </script>
 
     <script src="script.js"></script>
