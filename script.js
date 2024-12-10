@@ -1,12 +1,9 @@
-// Add a global state to track the active chart
-let activeChart = null;
-
 // Update Pie Chart
 function updatePieChart(attribute) {
     d3.csv("covid.csv").then(function(data) {
         var dimensions = {
-            width: 800,
-            height: 800,
+            width: 800,  
+            height: 800, 
             radius: Math.min(800, 800) / 2 * 0.5
         };
 
@@ -37,28 +34,50 @@ function updatePieChart(attribute) {
         slices.enter()
             .append("path")
             .merge(slices)
+            .transition()
+            .duration(1000)
             .attr("d", arc)
             .attr("fill", d => color(d.data.attribute))
             .attr("stroke", "white")
-            .attr("stroke-width", 2)
-            .on("click", function(event, d) {
-                // Toggle pie slice and chart state
-                var slice = d3.select(this);
-                var isActive = slice.classed("active");
-                d3.selectAll("#piechart path").classed("active", false).attr("fill", d => color(d.data.attribute));
-                slice.classed("active", !isActive).attr("fill", isActive ? color(d.data.attribute) : "gray");
-                activeChart = isActive ? null : "pie";
-
-                // Update bar chart to match
-                updateBarChart(attribute, activeChart === "pie");
-            });
+            .attr("stroke-width", 2);
 
         slices.exit().remove();
+
+        var total = d3.sum(filteredData, d => d.count); 
+        var legend = svg.selectAll(".legend")
+            .data(filteredData);
+
+        var legendEnter = legend.enter()
+            .append("g")
+            .attr("class", "legend")
+            .attr("transform", (d, i) => `translate(-${dimensions.radius + 400}, ${-dimensions.radius + i * 30})`);
+
+        legendEnter.append("rect")
+            .attr("x", dimensions.radius + 10)
+            .attr("y", 0)
+            .attr("width", 18)
+            .attr("height", 18)
+            .attr("fill", d => color(d.attribute));
+
+        legendEnter.append("text")
+            .attr("x", dimensions.radius + 35)
+            .attr("y", 9)
+            .attr("dy", "0.35em")
+            .style("text-anchor", "start")
+            .text(d => `${d.attribute}: ${d.count} (${((d.count / total) * 100).toFixed(1)}%)`);
+
+        legend.select("rect")
+            .attr("fill", d => color(d.attribute));
+
+        legend.select("text")
+            .text(d => `${d.attribute}: ${d.count} (${((d.count / total) * 100).toFixed(1)}%)`);
+
+        legend.exit().remove();
     });
 }
 
 // Update Bar Chart
-function updateBarChart(attribute, isActive = false) {
+function updateBarChart(attribute) {
     d3.csv("covid.csv").then(function(data) {
         var dimensions = {
             width: 1000,
@@ -69,7 +88,7 @@ function updateBarChart(attribute, isActive = false) {
         var svg = d3.select("#barchart")
             .style("width", dimensions.width)
             .style("height", dimensions.height);
-
+        
         svg.selectAll("*").remove();
 
         var attributeCounts = {};
@@ -86,7 +105,7 @@ function updateBarChart(attribute, isActive = false) {
             .sort((a, b) => b[1] - a[1]);
 
         var xScale = d3.scaleBand()
-            .domain(sortedData.map(d => d[0]))
+            .domain(sortedData.map(d => d[0])) 
             .range([dimensions.margin.left, dimensions.width - dimensions.margin.right])
             .padding(0.1);
 
@@ -103,32 +122,39 @@ function updateBarChart(attribute, isActive = false) {
             .call(d3.axisLeft(yScale));
 
         var bars = svg.selectAll(".bar")
-            .data(sortedData);
-
-        bars.enter()
+            .data(sortedData)
+            .enter()
             .append("rect")
             .attr("class", "bar")
             .attr("x", d => xScale(d[0]))
             .attr("y", d => yScale(d[1]))
-            .attr("width", xScale.bandwidth())
+            .attr("width", xScale.bandwidth()) 
             .attr("height", d => dimensions.height - dimensions.margin.bottom - yScale(d[1]))
-            .attr("fill", isActive ? "gray" : "red")
+            .attr("fill", "red")
             .on("click", function(event, d) {
-                // Toggle bar and chart state
                 var bar = d3.select(this);
-                var isBarActive = bar.classed("active");
-                svg.selectAll(".bar").classed("active", false).attr("fill", "red");
-                bar.classed("active", !isBarActive).attr("fill", isBarActive ? "red" : "gray");
-                activeChart = isBarActive ? null : "bar";
-
-                // Update pie chart to match
-                updatePieChart(attribute);
+                var count = d[1];
+            
+                // Toggle the fill color between green and red
+                var isActive = bar.attr("fill") === "green";
+                var newColor = isActive ? "red" : "green";
+                bar.attr("fill", newColor);
+            
+                // Remove the previous text if "unclicked"
+                //bar.select("text").remove();
+            
+                if (!isActive) {
+                    svg.append("text")
+                        .attr("x", xScale(d[0]) + xScale.bandwidth() / 2)
+                        .attr("y", yScale(d[1]) - 10)
+                        .attr("text-anchor", "middle")
+                        .attr("fill", "black")
+                        .text(count);
+                }
             });
 
-        bars.exit().remove();
     });
 }
-
 
 // Update Heatmap
 function updateHeatmap() {
