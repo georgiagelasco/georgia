@@ -1,3 +1,28 @@
+function updateAttribute(attribute, button) {
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(btn => {
+        btn.classList.remove('active-button');
+    });
+
+    button.classList.toggle('active-button');
+    
+    const isActive = button.classList.contains('active-button');
+    const count = getAttributeCount(attribute);
+    document.getElementById(`${attribute}-number`).textContent = isActive ? count : '';
+
+    updatePieChart(attribute);
+    updateBarChart(attribute);
+    updateHeatmap();
+}
+
+function getAttributeCount(attribute) {
+    let count = 0;
+    d3.csv("covid.csv").then(function(data) {
+        count = data.filter(d => d[attribute]).length;
+    });
+    return count;
+}
+
 // Update Pie Chart
 function updatePieChart(attribute) {
     d3.csv("covid.csv").then(function(data) {
