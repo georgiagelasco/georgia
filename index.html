@@ -11,43 +11,19 @@
         background-color: #ADD8E6;
         font-family: 'Roboto', sans-serif;
         color: #333;
+        text-align: center;
         margin: 0;
         padding: 0;
       }
 
       h1 {
-        text-align: center;
         margin: 20px 0;
         font-size: 2em;
         color: #222;
       }
 
-      .dashboard {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        padding: 20px;
-        max-width: 1200px;
-        margin: auto;
-      }
-
-      .chart-container {
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        text-align: center;
-      }
-
-      svg {
-        width: 100%;
-        height: 300px;
-      }
-
       .button-container {
-        text-align: center;
-        margin: 20px;
+        margin-bottom: 20px;
       }
 
       button {
@@ -65,71 +41,115 @@
       button:hover {
         background-color: #0056b3;
       }
+
+      button.active-button {
+        background-color: #4CAF50;
+        color: white;
+      }
+
+      .charts-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        padding: 20px;
+      }
+
+      .chart-container {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+      }
+
+      svg {
+        width: 100%;
+        height: auto;
+        display: none;
+      }
+
+      .active {
+        display: block;
+      }
+
+      #attribute-buttons-container {
+        margin: 20px;
+      }
+
+      #attribute-buttons-container button {
+        margin: 0 10px;
+      }
     </style>
   </head>
   <body>
     <h1>Covid-19 Data Visualization</h1>
 
-    <!-- Chart Dashboard -->
-    <div class="dashboard">
-      <div class="chart-container">
+    <div class="button-container">
+      <button onclick="showChart('piechart')">Show Pie Chart</button>
+      <button onclick="showChart('barchart')">Show Bar Chart</button>
+      <button onclick="showChart('heatmap')">Show Heatmap</button>
+    </div>
+
+    <!-- Attribute Buttons -->
+    <div id="attribute-buttons-container">
+      <button onclick="updateAttribute('sex')">Sex</button>
+      <button onclick="updateAttribute('age_group')">Age Group</button>
+      <button onclick="updateAttribute('race_ethnicity_combined')">Race/Ethnicity</button>
+      <button onclick="updateAttribute('hosp_yn')">Hospitalized</button>
+      <button onclick="updateAttribute('icu_yn')">ICU</button>
+      <button onclick="updateAttribute('death_yn')">Death</button>
+      <button onclick="updateAttribute('medcond_yn')">Medical Condition</button>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-container">
+      <div class="chart-container" id="piechart-container">
         <h3>Pie Chart</h3>
         <svg id="piechart"></svg>
       </div>
-      <div class="chart-container">
+      <div class="chart-container" id="barchart-container">
         <h3>Bar Chart</h3>
         <svg id="barchart"></svg>
       </div>
-      <div class="chart-container">
-        <h3>Heatmap</h3>
-        <svg id="heatmap"></svg>
-      </div>
     </div>
 
-    <!-- Buttons for selecting attributes -->
-    <div class="button-container">
-      <button onclick="updatePieChart('attribute1')">Attribute 1</button>
-      <button onclick="updatePieChart('attribute2')">Attribute 2</button>
-      <button onclick="updatePieChart('attribute3')">Attribute 3</button>
+    <div class="chart-container" id="heatmap-container">
+      <h3>Heatmap</h3>
+      <svg id="heatmap"></svg>
     </div>
 
-    <div class="button-container">
-      <button onclick="updateBarChart('attribute1')">Attribute 1</button>
-      <button onclick="updateBarChart('attribute2')">Attribute 2</button>
-      <button onclick="updateBarChart('attribute3')">Attribute 3</button>
-    </div>
-
-    <div class="button-container">
-      <button onclick="updateHeatmap('attribute1')">Attribute 1</button>
-      <button onclick="updateHeatmap('attribute2')">Attribute 2</button>
-      <button onclick="updateHeatmap('attribute3')">Attribute 3</button>
-    </div>
-
-    <!-- JavaScript -->
-    <script src="script.js"></script>
     <script>
-      // Ensure all charts are loaded when the page is ready
-      document.addEventListener("DOMContentLoaded", () => {
-        updatePieChart('attribute1');
-        updateBarChart('attribute1');
-        updateHeatmap('attribute1');
-      });
-
-      // Functions to update each chart based on selected attribute
-      function updatePieChart(attribute) {
-        console.log("Update Pie Chart with", attribute);
-        // Your pie chart update code here
+      function loadScript(src, callback) {
+        if (!document.querySelector(`script[src="${src}"]`)) {
+          let script = document.createElement('script');
+          script.src = src;
+          script.onload = callback;
+          document.body.appendChild(script);
+        } else if (callback) {
+          callback();
+        }
       }
 
-      function updateBarChart(attribute) {
-        console.log("Update Bar Chart with", attribute);
-        // Your bar chart update code here
+      function showChart(chartId) {
+        document.querySelectorAll("svg").forEach(chart => chart.classList.remove("active"));
+        document.querySelectorAll("button").forEach(button => button.classList.remove("active-button"));
+
+        document.getElementById(chartId).classList.add("active");
+        event.target.classList.add("active-button");
+        loadScript("script.js", () => console.log(`Script for ${chartId} loaded.`));
       }
 
-      function updateHeatmap(attribute) {
-        console.log("Update Heatmap with", attribute);
-        // Your heatmap update code here
+      function updateAttribute(attribute) {
+        console.log(`Attribute selected: ${attribute}`);
+        // You can update the charts with the selected attribute as needed.
+        // Example: updatePieChart(attribute);
+        // Example: updateBarChart(attribute);
+        // Example: updateHeatmap(attribute);
       }
+
+      showChart('piechart');
     </script>
+
+    <script src="script.js"></script>
   </body>
 </html>
