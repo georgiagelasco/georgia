@@ -134,25 +134,18 @@ function updateBarChart(attribute) {
             .on("click", function(event, d) {
                 var bar = d3.select(this);
                 var count = d[1];
-            
-                // Toggle the fill color between green and red
-                var isActive = bar.attr("fill") === "green";
-                var newColor = isActive ? "red" : "green";
-                bar.attr("fill", newColor);
-            
-                // Remove the previous text if "unclicked"
-                //bar.select("text").remove();
-            
-                if (!isActive) {
-                    svg.append("text")
-                        .attr("x", xScale(d[0]) + xScale.bandwidth() / 2)
-                        .attr("y", yScale(d[1]) - 10)
-                        .attr("text-anchor", "middle")
-                        .attr("fill", "black")
-                        .text(count);
-                }
-            });
 
+                alert("Count: " + count);
+
+                bar.attr("fill", "green");
+
+                svg.append("text")
+                    .attr("x", xScale(d[0]) + xScale.bandwidth() / 2)
+                    .attr("y", yScale(d[1]) - 10)
+                    .attr("text-anchor", "middle")
+                    .attr("fill", "black")
+                    .text(count);
+            });
     });
 }
 
