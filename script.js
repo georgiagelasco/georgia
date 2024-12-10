@@ -140,7 +140,7 @@ function updateBarChart(attribute) {
                 var newColor = isActive ? "red" : "green";
                 bar.attr("fill", newColor);
             
-                // Remove the number text when the bar is unclicked
+                // Remove all text elements
                 svg.selectAll("text").remove();
             
                 // Add the number text if the bar is clicked and not already active
