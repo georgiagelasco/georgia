@@ -141,7 +141,7 @@ function updateBarChart(attribute) {
                 bar.attr("fill", newColor);
             
                 // Remove the previous text if "unclicked"
-                bar.select("text").remove();
+                //bar.select("text").remove();
             
                 if (!isActive) {
                     svg.append("text")
