@@ -7,9 +7,8 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-      /* Common styles for all charts */
       body {
-        background-color: #ADD8E6; /* Soothing light blue */
+        background-color: #ADD8E6;
         font-family: 'Roboto', sans-serif;
         color: #333;
         margin: 0;
@@ -23,14 +22,9 @@
         color: #222;
       }
 
-      /* Chart layout */
       .dashboard {
         display: grid;
-        grid-template-areas:
-          "box1 box2"
-          "box3 box3";
-        grid-template-columns: 1fr 1fr; /* Equal columns for the top row */
-        grid-template-rows: auto auto; /* Rows for top and bottom */
+        grid-template-columns: 1fr 1fr;
         gap: 20px;
         padding: 20px;
         max-width: 1200px;
@@ -46,27 +40,14 @@
         text-align: center;
       }
 
-      #piechart-container {
-        grid-area: box1;
-      }
-
-      #barchart-container {
-        grid-area: box2;
-      }
-
-      #heatmap-container {
-        grid-area: box3;
-      }
-
       svg {
         width: 100%;
         height: 300px;
       }
 
-      /* Buttons styling */
       .button-container {
         text-align: center;
-        margin-bottom: 20px;
+        margin: 20px;
       }
 
       button {
@@ -91,25 +72,37 @@
 
     <!-- Chart Dashboard -->
     <div class="dashboard">
-      <div id="piechart-container" class="chart-container">
+      <div class="chart-container">
         <h3>Pie Chart</h3>
         <svg id="piechart"></svg>
       </div>
-      <div id="barchart-container" class="chart-container">
+      <div class="chart-container">
         <h3>Bar Chart</h3>
         <svg id="barchart"></svg>
       </div>
-      <div id="heatmap-container" class="chart-container">
+      <div class="chart-container">
         <h3>Heatmap</h3>
         <svg id="heatmap"></svg>
       </div>
     </div>
 
-    <!-- Dropdown replaced with buttons -->
+    <!-- Buttons for selecting attributes -->
     <div class="button-container">
-      <button onclick="updatePieChart()">Update Pie Chart</button>
-      <button onclick="updateBarChart()">Update Bar Chart</button>
-      <button onclick="updateHeatmap()">Update Heatmap</button>
+      <button onclick="updatePieChart('attribute1')">Attribute 1</button>
+      <button onclick="updatePieChart('attribute2')">Attribute 2</button>
+      <button onclick="updatePieChart('attribute3')">Attribute 3</button>
+    </div>
+
+    <div class="button-container">
+      <button onclick="updateBarChart('attribute1')">Attribute 1</button>
+      <button onclick="updateBarChart('attribute2')">Attribute 2</button>
+      <button onclick="updateBarChart('attribute3')">Attribute 3</button>
+    </div>
+
+    <div class="button-container">
+      <button onclick="updateHeatmap('attribute1')">Attribute 1</button>
+      <button onclick="updateHeatmap('attribute2')">Attribute 2</button>
+      <button onclick="updateHeatmap('attribute3')">Attribute 3</button>
     </div>
 
     <!-- JavaScript -->
@@ -117,10 +110,26 @@
     <script>
       // Ensure all charts are loaded when the page is ready
       document.addEventListener("DOMContentLoaded", () => {
-        updatePieChart();
-        updateBarChart();
-        updateHeatmap();
+        updatePieChart('attribute1');
+        updateBarChart('attribute1');
+        updateHeatmap('attribute1');
       });
+
+      // Functions to update each chart based on selected attribute
+      function updatePieChart(attribute) {
+        console.log("Update Pie Chart with", attribute);
+        // Your pie chart update code here
+      }
+
+      function updateBarChart(attribute) {
+        console.log("Update Bar Chart with", attribute);
+        // Your bar chart update code here
+      }
+
+      function updateHeatmap(attribute) {
+        console.log("Update Heatmap with", attribute);
+        // Your heatmap update code here
+      }
     </script>
   </body>
 </html>
