@@ -39,40 +39,21 @@ function updatePieChart(attribute) {
             .attr("d", arc)
             .attr("fill", d => color(d.data.attribute))
             .attr("stroke", "white")
-            .attr("stroke-width", 2);
+            .attr("stroke-width", 2)
+            .on("click", function(event, d) {
+                // Highlight corresponding bar in bar chart and turn it gray
+                d3.selectAll("#barchart .bar").each(function(barData) {
+                    if (barData[0] === d.data.attribute) {
+                        var bar = d3.select(this);
+                        bar.attr("fill", "gray"); // Set bar to gray
+                    }
+                });
+
+                // Highlight corresponding pie slice in gray
+                d3.select(this).attr("fill", "gray");
+            });
 
         slices.exit().remove();
-
-        var total = d3.sum(filteredData, d => d.count); 
-        var legend = svg.selectAll(".legend")
-            .data(filteredData);
-
-        var legendEnter = legend.enter()
-            .append("g")
-            .attr("class", "legend")
-            .attr("transform", (d, i) => `translate(-${dimensions.radius + 400}, ${-dimensions.radius + i * 30})`);
-
-        legendEnter.append("rect")
-            .attr("x", dimensions.radius + 10)
-            .attr("y", 0)
-            .attr("width", 18)
-            .attr("height", 18)
-            .attr("fill", d => color(d.attribute));
-
-        legendEnter.append("text")
-            .attr("x", dimensions.radius + 35)
-            .attr("y", 9)
-            .attr("dy", "0.35em")
-            .style("text-anchor", "start")
-            .text(d => `${d.attribute}: ${d.count} (${((d.count / total) * 100).toFixed(1)}%)`);
-
-        legend.select("rect")
-            .attr("fill", d => color(d.attribute));
-
-        legend.select("text")
-            .text(d => `${d.attribute}: ${d.count} (${((d.count / total) * 100).toFixed(1)}%)`);
-
-        legend.exit().remove();
     });
 }
 
@@ -133,28 +114,20 @@ function updateBarChart(attribute) {
             .attr("fill", "red")
             .on("click", function(event, d) {
                 var bar = d3.select(this);
-                var count = d[1];
             
-                // Toggle the fill color between green and red
-                var isActive = bar.attr("fill") === "green";
-                var newColor = isActive ? "red" : "green";
-                bar.attr("fill", newColor);
-            
-                // Remove the previous text if "unclicked"
-                //bar.select("text").remove();
-            
-                if (!isActive) {
-                    svg.append("text")
-                        .attr("x", xScale(d[0]) + xScale.bandwidth() / 2)
-                        .attr("y", yScale(d[1]) - 10)
-                        .attr("text-anchor", "middle")
-                        .attr("fill", "black")
-                        .text(count);
-                }
-            });
+                // Set bar to gray
+                bar.attr("fill", "gray");
 
+                // Highlight corresponding pie chart slice in gray
+                d3.selectAll("#piechart path").each(function(pieSlice) {
+                    if (pieSlice.data.attribute === d[0]) {
+                        d3.select(this).attr("fill", "gray");
+                    }
+                });
+            });
     });
 }
+
 
 // Update Heatmap
 function updateHeatmap() {
