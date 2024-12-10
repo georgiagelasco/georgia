@@ -124,7 +124,7 @@
 
         // Toggle dropdown visibility based on chart
         const dropdownContainer = document.getElementById("dropdown-container");
-        if (chartId === "piechart" || chartId === "barchart" || chartId = "heatmap") {
+        if (chartId === "piechart" || chartId === "barchart" || chartId === "heatmap") {
           dropdownContainer.style.display = "block";
           // Populate or refresh dropdown options when switching to piechart or barchart
           populateDropdown();
@@ -148,7 +148,7 @@
         } else if (document.getElementById("barchart").classList.contains("active")) {
           updateBarChart(selectedValue); // Ensure bar chart updates
         } else if (document.getElementById("heatmap").classList.contains("active")) {
-          updateHeatMap(); // Ensure heat map updates
+          updateHeatMao(); // Ensure bar chart updates
         }
       }
 
