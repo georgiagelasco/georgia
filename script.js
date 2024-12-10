@@ -140,12 +140,13 @@ function updateBarChart(attribute) {
                 var newColor = isActive ? "red" : "green";
                 bar.attr("fill", newColor);
             
-                // Remove all text elements
-                svg.selectAll("text").remove();
+                // Remove only the number text, not the axis labels
+                svg.selectAll(".countText").remove();
             
                 // Add the number text if the bar is clicked and not already active
                 if (!isActive) {
                     svg.append("text")
+                        .attr("class", "countText")  // Add a class to the text element
                         .attr("x", xScale(d[0]) + xScale.bandwidth() / 2)
                         .attr("y", yScale(d[1]) - 10)
                         .attr("text-anchor", "middle")
