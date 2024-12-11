@@ -52,7 +52,7 @@ function updatePieChart(attribute) {
                     svg.selectAll(`.label-${d.data.attribute.replace(/\s+/g, "-")}`).remove();
                 } else {
                     // Change to gray and add percentage text
-                    slice.transition().duration(500).attr("fill", "gray");
+                    slice.transition().duration(500).attr("fill", "black");
 
                     // Calculate percentage
                     var total = d3.sum(filteredData, (d) => d.count);
@@ -63,7 +63,7 @@ function updatePieChart(attribute) {
                         .attr("transform", `translate(${arc.centroid(d)})`)
                         .attr("text-anchor", "middle")
                         .attr("dy", ".35em")
-                        .attr("fill", "black")
+                        .attr("fill", "white")
                         .style("font-size", "14px")
                         .text(`${percentage}%`);
                 }
@@ -170,8 +170,8 @@ function updateBarChart(attribute) {
                 var count = d[1];
             
                 // Toggle the fill color between green and red
-                var isActive = bar.attr("fill") === "green";
-                var newColor = isActive ? "red" : "green";
+                var isActive = bar.attr("fill") === "black";
+                var newColor = isActive ? "red" : "black";
                 bar.attr("fill", newColor);
             
                 // Remove the previous text if "unclicked"
