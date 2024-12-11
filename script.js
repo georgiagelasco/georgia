@@ -196,7 +196,7 @@ function updateHeatmap() {
         width = 450 - margin.left - margin.right,
         height = 450 - margin.top - margin.bottom;
 
-    var svg = d3.select("#my_dataviz")
+    var svg = d3.select("#heatmap")
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
