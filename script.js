@@ -1,3 +1,6 @@
+// Global variable to track the selected category
+let selectedCategory = null;
+
 // Update Pie Chart
 function updatePieChart(attribute) {
     d3.csv("covid.csv").then(function (data) {
@@ -36,97 +39,38 @@ function updatePieChart(attribute) {
             .append("path")
             .merge(slices)
             .attr("d", arc)
-            .attr("fill", (d) => color(d.data.attribute))
+            .attr("fill", (d) =>
+                selectedCategory === d.data.attribute ? "black" : color(d.data.attribute)
+            )
             .attr("stroke", "white")
             .attr("stroke-width", 2)
             .on("click", function (event, d) {
-                var slice = d3.select(this);
-                var isActive = slice.attr("data-active") === "true";
-
-                // Toggle active state
-                slice.attr("data-active", !isActive);
-
-                if (isActive) {
-                    // Reset to original color
-                    slice.transition().duration(500).attr("fill", color(d.data.attribute));
-                    svg.selectAll(`.label-${d.data.attribute.replace(/\s+/g, "-")}`).remove();
-                } else {
-                    // Change to gray and add percentage text
-                    slice.transition().duration(500).attr("fill", "black");
-
-                    // Calculate percentage
-                    var total = d3.sum(filteredData, (d) => d.count);
-                    var percentage = ((d.data.count / total) * 100).toFixed(1);
-
-                    svg.append("text")
-                        .attr("class", `label-${d.data.attribute.replace(/\s+/g, "-")}`)
-                        .attr("transform", `translate(${arc.centroid(d)})`)
-                        .attr("text-anchor", "middle")
-                        .attr("dy", ".35em")
-                        .attr("fill", "white")
-                        .style("font-size", "14px")
-                        .text(`${percentage}%`);
-                }
+                selectedCategory = selectedCategory === d.data.attribute ? null : d.data.attribute;
+                updatePieChart(attribute);
+                updateBarChart(attribute);
             });
 
         slices.exit().remove();
-
-        var total = d3.sum(filteredData, (d) => d.count);
-        var legend = svg.selectAll(".legend").data(filteredData);
-
-        var legendEnter = legend
-            .enter()
-            .append("g")
-            .attr("class", "legend")
-            .attr(
-                "transform",
-                (d, i) => `translate(-${dimensions.radius + 400}, ${-dimensions.radius + i * 30})`
-            );
-
-        legendEnter
-            .append("rect")
-            .attr("x", dimensions.radius + 10)
-            .attr("y", 0)
-            .attr("width", 18)
-            .attr("height", 18)
-            .attr("fill", (d) => color(d.attribute));
-
-        legendEnter
-            .append("text")
-            .attr("x", dimensions.radius + 35)
-            .attr("y", 9)
-            .attr("dy", "0.35em")
-            .style("text-anchor", "start")
-            .text((d) => `${d.attribute}: ${d.count} (${((d.count / total) * 100).toFixed(1)}%)`);
-
-        legend.select("rect").attr("fill", (d) => color(d.attribute));
-
-        legend.select("text").text(
-            (d) => `${d.attribute}: ${d.count} (${((d.count / total) * 100).toFixed(1)}%)`
-        );
-
-        legend.exit().remove();
     });
 }
 
-
 // Update Bar Chart
 function updateBarChart(attribute) {
-    d3.csv("covid.csv").then(function(data) {
+    d3.csv("covid.csv").then(function (data) {
         var dimensions = {
             width: 1000,
             height: 600,
-            margin: { top: 10, bottom: 50, right: 10, left: 50 }
+            margin: { top: 10, bottom: 50, right: 10, left: 50 },
         };
 
         var svg = d3.select("#barchart")
             .style("width", dimensions.width)
             .style("height", dimensions.height);
-        
+
         svg.selectAll("*").remove();
 
         var attributeCounts = {};
-        data.forEach(row => {
+        data.forEach((row) => {
             var attributeValue = row[attribute];
             if (attributeCounts[attributeValue]) {
                 attributeCounts[attributeValue]++;
@@ -135,16 +79,15 @@ function updateBarChart(attribute) {
             }
         });
 
-        var sortedData = Object.entries(attributeCounts)
-            .sort((a, b) => b[1] - a[1]);
+        var sortedData = Object.entries(attributeCounts).sort((a, b) => b[1] - a[1]);
 
         var xScale = d3.scaleBand()
-            .domain(sortedData.map(d => d[0])) 
+            .domain(sortedData.map((d) => d[0]))
             .range([dimensions.margin.left, dimensions.width - dimensions.margin.right])
             .padding(0.1);
 
         var yScale = d3.scaleLinear()
-            .domain([0, d3.max(sortedData, d => d[1])])
+            .domain([0, d3.max(sortedData, (d) => d[1])])
             .range([dimensions.height - dimensions.margin.bottom, dimensions.margin.top]);
 
         svg.append("g")
@@ -160,35 +103,21 @@ function updateBarChart(attribute) {
             .enter()
             .append("rect")
             .attr("class", "bar")
-            .attr("x", d => xScale(d[0]))
-            .attr("y", d => yScale(d[1]))
-            .attr("width", xScale.bandwidth()) 
-            .attr("height", d => dimensions.height - dimensions.margin.bottom - yScale(d[1]))
-            .attr("fill", "red")
-            .on("click", function(event, d) {
-                var bar = d3.select(this);
-                var count = d[1];
-            
-                // Toggle the fill color between green and red
-                var isActive = bar.attr("fill") === "black";
-                var newColor = isActive ? "red" : "black";
-                bar.attr("fill", newColor);
-            
-                // Remove the previous text if "unclicked"
-                //bar.select("text").remove();
-            
-                if (!isActive) {
-                    svg.append("text")
-                        .attr("x", xScale(d[0]) + xScale.bandwidth() / 2)
-                        .attr("y", yScale(d[1]) - 10)
-                        .attr("text-anchor", "middle")
-                        .attr("fill", "black")
-                        .text(count);
-                }
+            .attr("x", (d) => xScale(d[0]))
+            .attr("y", (d) => yScale(d[1]))
+            .attr("width", xScale.bandwidth())
+            .attr("height", (d) => dimensions.height - dimensions.margin.bottom - yScale(d[1]))
+            .attr("fill", (d) =>
+                selectedCategory === d[0] ? "black" : "red"
+            )
+            .on("click", function (event, d) {
+                selectedCategory = selectedCategory === d[0] ? null : d[0];
+                updatePieChart(attribute);
+                updateBarChart(attribute);
             });
-
     });
 }
+
 
 // Update Heatmap
 function updateHeatmap() {
