@@ -42,18 +42,22 @@ function updatePieChart(attribute) {
             .on("click", function (event, d) {
                 var slice = d3.select(this);
                 var isActive = slice.attr("data-active") === "true";
-            
+
                 // Toggle active state
                 slice.attr("data-active", !isActive);
-            
+
                 if (isActive) {
-                    // Remove label on deactivation
+                    // Reset to original color
+                    slice.transition().duration(500).attr("fill", color(d.data.attribute));
                     svg.selectAll(`.label-${d.data.attribute.replace(/\s+/g, "-")}`).remove();
                 } else {
+                    // Change to gray and add percentage text
+                    slice.transition().duration(500).attr("fill", "black");
+
                     // Calculate percentage
                     var total = d3.sum(filteredData, (d) => d.count);
                     var percentage = ((d.data.count / total) * 100).toFixed(1);
-            
+
                     svg.append("text")
                         .attr("class", `label-${d.data.attribute.replace(/\s+/g, "-")}`)
                         .attr("transform", `translate(${arc.centroid(d)})`)
@@ -164,18 +168,17 @@ function updateBarChart(attribute) {
             .on("click", function(event, d) {
                 var bar = d3.select(this);
                 var count = d[1];
-                var isActive = bar.attr("data-active") === "true";
             
-                // Toggle active state
-                bar.attr("data-active", !isActive);
+                // Toggle the fill color between green and red
+                var isActive = bar.attr("fill") === "black";
+                var newColor = isActive ? "red" : "black";
+                bar.attr("fill", newColor);
             
-                if (isActive) {
-                    // Remove label on deactivation
-                    svg.selectAll(`.label-${d[0].replace(/\s+/g, "-")}`).remove();
-                } else {
-                    // Add label with count
+                // Remove the previous text if "unclicked"
+                //bar.select("text").remove();
+            
+                if (!isActive) {
                     svg.append("text")
-                        .attr("class", `label-${d[0].replace(/\s+/g, "-")}`)
                         .attr("x", xScale(d[0]) + xScale.bandwidth() / 2)
                         .attr("y", yScale(d[1]) - 10)
                         .attr("text-anchor", "middle")
